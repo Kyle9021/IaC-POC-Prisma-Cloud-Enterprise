@@ -28,9 +28,9 @@ pcee_secretkey="<SECRET_KEY>"
 pcee_payload_file_location="./config-file-template.json"
 
 
-# TF Template to be scanned, put the file location path. Replace example below:
+# TF Template to be scanned, put the file location path. No need to change if you follow the README to a T below:
 
-pcee_iac_scan_file="/home/kbutler/count/iac_dir/terraform-examples/aws/wordpress_fargate/db.tf"
+pcee_iac_scan_file=""${HOME}"/terragoat/terraform/aws/ec2.tf"
 
 # choose either tf=terraform, cft=cloud_formation_template, k8=kubernetes_manifest
 pcee_template_type="tf"
