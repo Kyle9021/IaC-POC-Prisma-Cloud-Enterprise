@@ -3,7 +3,7 @@
 # Tested on 5.4.2021 on prisma_cloud_enterprise_edition using Ubuntu 20.04
 
 # Requires jq to be installed sudo apt-get install jq
-# (optional but not required) cowsay: sudo apt install cowboy
+# (optional but not required) cowsay: sudo apt install cowsay
 
 
 # Access key should be created in the Prisma Cloud Console under: Settings > Accesskeys
