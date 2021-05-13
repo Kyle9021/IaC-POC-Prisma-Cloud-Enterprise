@@ -61,7 +61,7 @@ pcee_auth_token=$(curl -s --request POST \
 pcee_compute_auth_body="{\"username\":\""${pcee_accesskey}"\", \"password\":\""${pcee_secretkey}"\"}"
 
 # This saves the auth token needed to access the CWPP side of the Prisma Cloud API to a variable $pcee_compute_token
-pcee_compute_token=$(curl -s\
+pcee_compute_token=$(curl -s \
 -H "Content-Type: application/json" \
 -d "${pcee_compute_auth_body}" \
 "${pcee_console_url}"/api/v1/authenticate | jq -r '.token')
@@ -89,7 +89,7 @@ echo "I'm getting the tokens boss" | cowsay
 
 # This saves the json as a variable so it can be manipulated for downstream processing below.
 
-pcee_scan=$(curl \
+pcee_scan=$(curl -s \
 --request POST \
 -H "x-redlock-auth: "${pcee_auth_token}"" \
 -H 'content-type: application/vnd.api+json' \
@@ -137,11 +137,12 @@ pcee_scan_status=$(curl -s -X GET "https://"${pcee_console_api_url}"/iac/v2/scan
 # Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
 echo "${pcee_scan_status}" | cowthink
 
+# In a real CI/CD workflow you'd most likely want a "while loop here" based on the response....however it's not needed to set-up a demo environment. 
 sleep 5
 
 # Retrieves the results
  
-curl --request GET \
+curl -s --request GET \
 --url "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"/results" \
 --header "content-type: application/json" \
 --header "x-redlock-auth: "${pcee_auth_token}"" | jq '.[]' | cowsay -f skeleton 
