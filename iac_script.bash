@@ -14,7 +14,7 @@
 
 
 # Only variable(s) needing to be assigned by and end-user
-# Found on https://prisma.pan.dev/api/cloud/api-urls, replace value below
+# Found on https://prisma.pan.dev/api/cloud/api-urls, replace value below if it doesn't fit your environment. 
 
 pcee_console_api_url="api.prismacloud.io"
 
@@ -51,7 +51,7 @@ pcee_payload_file=$(cat "${pcee_payload_file_location}")
 pcee_auth_body="{\"username\":\""${pcee_accesskey}"\", \"password\":\""${pcee_secretkey}"\"}"
 
 # This saves the auth token needed to access the CSPM side of the Prisma Cloud API to a variable I named $pcee_auth_token
-pcee_auth_token=$(curl --request POST \
+pcee_auth_token=$(curl -s --request POST \
 --url https://"${pcee_console_api_url}"/login \
 --header 'Accept: application/json; charset=UTF-8' \
 --header 'Content-Type: application/json; charset=UTF-8' \
@@ -61,7 +61,7 @@ pcee_auth_token=$(curl --request POST \
 pcee_compute_auth_body="{\"username\":\""${pcee_accesskey}"\", \"password\":\""${pcee_secretkey}"\"}"
 
 # This saves the auth token needed to access the CWPP side of the Prisma Cloud API to a variable $pcee_compute_token
-pcee_compute_token=$(curl \
+pcee_compute_token=$(curl -s\
 -H "Content-Type: application/json" \
 -d "${pcee_compute_auth_body}" \
 "${pcee_console_url}"/api/v1/authenticate | jq -r '.token')
@@ -117,7 +117,7 @@ echo "Okay, I'll stage the files for scanning...whew...lot of work here" | cowsa
 pcee_temp_json="{\"data\":{\"id\":\""${pcee_scan_id}"\", \"attributes\":{\"templateType\":\""${pcee_template_type}"\", \"templateVersion\":\""${pcee_template_version}"\"}}}"
 
 # Starts the scan
-curl --request POST \
+curl -s --request POST \
 --header 'content-type: application/vnd.api+json' \
 --header "x-redlock-auth: "${pcee_auth_token}"" \
 --url "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"" \
@@ -129,7 +129,7 @@ echo "I wonder how we did" | cowthink
 
 # This part retrieves the scan progress. It should be converted to a "while loop" outside of a demo env. 
 
-pcee_scan_status=$(curl -X GET "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"/status" \
+pcee_scan_status=$(curl -s -X GET "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"/status" \
 --header "x-redlock-auth: "${pcee_auth_token}"" \
 --header 'Content-Type: application/vnd.api+json' | jq '.[] | {status: .attributes.status}' \
 |jq -r .status)
