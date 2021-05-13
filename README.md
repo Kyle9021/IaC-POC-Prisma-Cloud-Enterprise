@@ -9,7 +9,7 @@
 
 * If you do decide to keep the keys in this script, then it's critical you:
   
-   * Add it to your `.gitignore` file and `chmod 700 iac_script.bash` so that others can't read, write, or excute it. 
+   * Add it to your `.gitignore` (if using git) file and `chmod 700 iac_script.bash` between steps 3 and 4 below so that others can't read, write, or excute it. 
 
 # Instructions
 
