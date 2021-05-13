@@ -7,6 +7,12 @@
 * You're able to reach your Prisma Cloud Enterprise Edition console from your ubuntu 20.04 machine
 * You would know how to harden this process if working in a production environment.
 
+* If you do decide to keep the keys in this script, then it's critical you:
+  
+   * Add it to your `.gitignore` file and `chmod 700 iac_script.bash` so that others can't read, write, or excute it. 
+
+# Instructions
+
 ## Instructions
 
 * Step 1: `git clone https://github.com/Kyle9021/IaC-POC-Prisma-Cloud-Enterprise`
