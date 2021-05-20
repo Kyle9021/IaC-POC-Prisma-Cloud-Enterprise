@@ -30,7 +30,7 @@ pcee_payload_file_location="./config-file-template.json"
 
 # TF Template to be scanned, put the file location path. No need to change if you follow the README to a T below:
 
-pcee_iac_scan_file=""${HOME}"/terragoat/terraform/aws/ec2.tf"
+pcee_iac_scan_file="${HOME}/terragoat/terraform/aws/ec2.tf"
 
 # choose either tf=terraform, cft=cloud_formation_template, k8=kubernetes_manifest
 pcee_template_type="tf"
@@ -48,23 +48,23 @@ pcee_console_url="<REPLACE_WITH_THE_APPROPRIATE_VALUE_FOUND_ABOVE>"
 pcee_payload_file=$(cat "${pcee_payload_file_location}")
 
 # This variable formats everything correctly so that the next variable can be assigned.
-pcee_auth_body="{\"username\":\""${pcee_accesskey}"\", \"password\":\""${pcee_secretkey}"\"}"
+pcee_auth_body="{\"username\":\"${pcee_accesskey}\", \"password\":\"${pcee_secretkey}\"}"
 
 # This saves the auth token needed to access the CSPM side of the Prisma Cloud API to a variable I named $pcee_auth_token
 pcee_auth_token=$(curl -s --request POST \
---url https://"${pcee_console_api_url}"/login \
+--url "https://${pcee_console_api_url}/login" \
 --header 'Accept: application/json; charset=UTF-8' \
 --header 'Content-Type: application/json; charset=UTF-8' \
 --data "${pcee_auth_body}" | jq -r '.token')
 
 # This variable formats everything correctly so that the next variable can be assigned.
-pcee_compute_auth_body="{\"username\":\""${pcee_accesskey}"\", \"password\":\""${pcee_secretkey}"\"}"
+pcee_compute_auth_body="{\"username\":\"${pcee_accesskey}\", \"password\":\"${pcee_secretkey}\"}"
 
 # This saves the auth token needed to access the CWPP side of the Prisma Cloud API to a variable $pcee_compute_token
 pcee_compute_token=$(curl -s \
 -H "Content-Type: application/json" \
 -d "${pcee_compute_auth_body}" \
-"${pcee_console_url}"/api/v1/authenticate | jq -r '.token')
+"${pcee_console_url}/api/v1/authenticate" | jq -r '.token')
 
 
 # Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
@@ -91,10 +91,10 @@ echo "I'm getting the tokens boss" | cowsay
 
 pcee_scan=$(curl -s \
 --request POST \
--H "x-redlock-auth: "${pcee_auth_token}"" \
+-H "x-redlock-auth: ${pcee_auth_token}" \
 -H 'content-type: application/vnd.api+json' \
 -d "${pcee_payload_file}" \
---url "https://"${pcee_console_api_url}"/iac/v2/scans")
+--url "https://${pcee_console_api_url}/iac/v2/scans")
 
 # Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
 echo "I'm checking the config file boss" | cowsay -t
@@ -114,13 +114,13 @@ curl -s -X PUT "${pcee_scan_url}" -T "${pcee_iac_scan_file}"
 echo "Okay, I'll stage the files for scanning...whew...lot of work here" | cowsay -t
 
 # Same thing as above, I did this to help with formatting errors while working with json in bash
-pcee_temp_json="{\"data\":{\"id\":\""${pcee_scan_id}"\", \"attributes\":{\"templateType\":\""${pcee_template_type}"\", \"templateVersion\":\""${pcee_template_version}"\"}}}"
+pcee_temp_json="{\"data\":{\"id\":\"${pcee_scan_id}\", \"attributes\":{\"templateType\":\"${pcee_template_type}\", \"templateVersion\":\"${pcee_template_version}\"}}}"
 
 # Starts the scan
 curl -s --request POST \
 --header 'content-type: application/vnd.api+json' \
---header "x-redlock-auth: "${pcee_auth_token}"" \
---url "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"" \
+--header "x-redlock-auth: ${pcee_auth_token}" \
+--url "https://${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}" \
 --data-raw "${pcee_temp_json}"
 
 # Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
@@ -129,8 +129,8 @@ echo "I wonder how we did" | cowthink
 
 # This part retrieves the scan progress. It should be converted to a "while loop" outside of a demo env. 
 
-pcee_scan_status=$(curl -s -X GET "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"/status" \
---header "x-redlock-auth: "${pcee_auth_token}"" \
+pcee_scan_status=$(curl -s -X GET "https://${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}/status" \
+--header "x-redlock-auth: ${pcee_auth_token}" \
 --header 'Content-Type: application/vnd.api+json' | jq '.[] | {status: .attributes.status}' \
 |jq -r .status)
 
@@ -143,6 +143,6 @@ sleep 5
 # Retrieves the results
  
 curl -s --request GET \
---url "https://"${pcee_console_api_url}"/iac/v2/scans/"${pcee_scan_id}"/results" \
+--url "https://${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}/results" \
 --header "content-type: application/json" \
---header "x-redlock-auth: "${pcee_auth_token}"" | jq '.[]' | cowsay -f skeleton 
+--header "x-redlock-auth: ${pcee_auth_token}" | jq '.[]' | cowsay -f skeleton 
