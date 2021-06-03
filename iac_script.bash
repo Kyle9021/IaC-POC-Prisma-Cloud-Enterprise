@@ -71,22 +71,6 @@ pcee_compute_token=$(curl -s \
 
 echo "I'm getting the tokens boss" | cowsay
 
-
-# Everything here is for container scanning. Delete or disregard. 
-# Download the latest twistcli tool
-# curl --header "authorization: Bearer "${pcee_compute_token}"" \
-# "${pcee_console_url}"/api/v1/util/twistcli > twistcli; chmod a+x twistcli;
-
-# Scan with twistcli ----for containers
-
-# ./twistcli image scan --token "${pcee_compute_token}"\
-# --config-file "${pcee_iac_config_file_location}"\
-# --type "${pcee_iac_file_type}" --files "${pcee_iac_scan_file}"\
-# --compliance-threshold "${pcee_iac_compliance_threshold}"
-# --address "${pcee_console_url}" --output-file "${PWD}"
-# End of Container Scanning section ---
-
-
 # This saves the json as a variable so it can be manipulated for downstream processing below.
 
 pcee_scan=$(curl \
