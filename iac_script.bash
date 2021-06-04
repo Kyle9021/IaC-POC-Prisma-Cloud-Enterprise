@@ -25,14 +25,14 @@ pcee_secretkey="<SECRET_KEY>"
 # The location of the TF or CFT template to be scanned
 pcee_iac_scan_file="${HOME}/terragoat/terraform/aws/ec2.tf"
 
-# choose either tf=terraform, cft=cloud_formation_template, k8=kubernetes_manifest
+# Choose either tf=terraform, cft=cloud_formation_template, k8=kubernetes_manifest
 pcee_template_type="tf"
 
-# choose either 11 = 0.11, 12 = 0.12, or 13 = 0.13
+# Choose either 11 = 0.11, 12 = 0.12, or 13 = 0.13
 pcee_template_version="12"
 
-# chnage the values inbetween the "<>" TODO: I'll think of a better way to do this. 
-# failure criteria is specifying how many policies will "fail" a check based on the severity
+# Change the values inbetween the "<>" TODO: I'll think of a better way to do this. 
+# Failure criteria is specifying how many policies will "fail" a check based on the severity
 
 pcee_iac_payload_single="
 {
