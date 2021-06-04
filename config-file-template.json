@@ -10,8 +10,8 @@
         "format": "<BOTH_KEY_AND_VALUE_CUSTOM>"
       },
       "scanAttributes": {
-        "scantype": "vulnerability",
-        "dev": "<BOTH_KEY_AND_VALUE_CUSTOM>"
+        "scantype":"vulnerability",
+        "dev":"<BOTH_KEY_AND_VALUE_CUSTOM>"
       },
       "failureCriteria": {
         "high": 1,
