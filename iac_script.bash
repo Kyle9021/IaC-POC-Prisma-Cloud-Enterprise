@@ -31,7 +31,7 @@ pcee_template_type="tf"
 # choose either 11 = 0.11, 12 = 0.12, or 13 = 0.13
 pcee_template_version="12"
 
-# you can change the TAG key:value pairs as needed. Pull in data from other api calls etc. 
+# chnage the values inbetween the "<>" TODO: I'll think of a better way to do this. 
 # failure criteria is specifying how many policies will "fail" a check based on the severity
 
 pcee_iac_payload_single="
@@ -39,17 +39,16 @@ pcee_iac_payload_single="
   'data': {
     'type': 'async-scan',
     'attributes': {
-      'assetName': 'ec2_instance_test.tf',
-      'assetType': 'AWSCodePipeline',
+      'assetName': '<WHATEVER_YOU_WANT_THE_ASSET_TO_APPEAR_AS>',
+      'assetType': '<CHOOSE_EITHER: AzureDevOps AWSCodePipeline BitbucketCloud BitbucketServer CircleCI GitHub GitLab-CICD GitLab-SCM IaC-API IntelliJ Jenkins twistcli or VSCode>',
       'tags': {
-        'env': 'test',
-        'filetype': 'tf',
-        'dev': 'test-dev',
-        'dept': 'IT'
+        'env': '<BOTH_KEY_AND_VALUE_CUSTOM>',
+        'dept': '<BOTH_KEY_AND_VALUE_CUSTOM>',
+        'dev': '<BOTH_KEY_AND_VALUE_CUSTOM>'
       },
       'scanAttributes': {
         'scantype':'vulnerability',
-        'dev': 'devloper'
+        'dev':'<BOTH_KEY_AND_VALUE_CUSTOM>'
       },
       'failureCriteria': {
         'high': 1,
