@@ -21,7 +21,7 @@
 * Step 4: `nano iac_script.bash` and assign variables according to comment documentation
 * Step 5: Install jq if you dont have it `sudo apt update && upgrade -y` then `sudo apt-get install jq` 
 * Step 6: Install cowsay `sudo apt install cowsay`
-* Step 7: `bash iac_script.bash`
+* Step 7: `bash iac_script.sh`
 
 
 # Links to reference
