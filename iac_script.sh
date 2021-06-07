@@ -155,7 +155,16 @@ sleep 10
 
 # Retrieves the results
 
-curl --request GET \
-     --url "${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}/results" \
-     --header "content-type: application/json" \
-     --header "x-redlock-auth: ${pcee_auth_token}" | jq '.[]' | cowsay -f skeleton
+pcee_iac_results=$(curl --request GET \
+                        --url "${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}/results" \
+                        --header "content-type: application/json" \
+                        --header "x-redlock-auth: ${pcee_auth_token}")
+
+echo "${pcee_iac_results}" | jq '.data[] | {issue: .attributes.name, severity: .attributes.severity, rule: .attributes.rule, description: .attributes.desc, pan_link: .attributes.docUrl, file: .attributes.blameList[].file, path: .attributes.blameList[].locations[].path, line: .attributes.blameList[].locations[].line}'| cowsay -W 80
+
+echo "details above" | cowsay
+
+echo "On today's date: $(date)"
+echo "$(echo ${pcee_iac_results} | jq '.meta.matchedPoliciesSummary.high') high severity issue(s) found"
+echo "$(echo ${pcee_iac_results} | jq '.meta.matchedPoliciesSummary.medium') medium severity issue(s) found"
+echo "$(echo ${pcee_iac_results} | jq '.meta.matchedPoliciesSummary.low') low severity issue(s) found"
