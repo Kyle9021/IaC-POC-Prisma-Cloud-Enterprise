@@ -72,6 +72,8 @@ pcee_auth_body_single="
 
 pcee_auth_body="${pcee_auth_body_single//\'/\"}"
 
+# debugging to ensure jq and cowsay are installed
+
 if ! type "jq" > /dev/null; then
   error_and_exit "jq not installed or not in execution path, jq is required for script execution."
 fi
@@ -79,6 +81,36 @@ fi
 if ! type "cowsay" > /dev/null; then
   error_and_exit "cowsay not installed or not in execution path, cowsay is required for script execution."
 fi
+
+# debugging to ensure the variables are assigned correctly not required
+
+if [ ! -n "$pcee_console_api_url" ] || [ ! -n "$pcee_secretkey" ] || [ ! -n "$pcee_accesskey" ]; then
+  echo "pcee_console_api_url or pcee_accesskey or pcee_secret key came up null" | cowsay;
+  exit;
+fi
+
+if [[ ! $pcee_console_api_url =~ ^(\"\')?https\:\/\/api[2-3]?\.prismacloud\.io(\"|\')?$ ]]; then
+  echo "pcee_console_api_url variable isn't formatted or assigned correctly" | cowsay;
+  exit;
+fi
+
+if [[ ! $pcee_accesskey =~ ^.{35,40}$ ]]; then
+  echo "check the pcee_accesskey variable because it doesn't appear to be the correct length" | cowsay;
+  exit;
+fi
+
+if [[ ! $pcee_secretkey =~ ^.{27,31}$ ]]; then
+  echo "check the pcee_accesskey variable because it doesn't appear to be the correct length" | cowsay;
+  exit;
+fi
+
+if [[ ! -f $pcee_iac_scan_file ]]; then
+  echo "check to see if the pcee_iac_scan_file variable is assigned correctly; because, file not found" | cowsay;
+  exit;
+fi
+
+
+
 # Saves the auth token needed to access the CSPM side of the Prisma Cloud API to a variable named $pcee_auth_token
 
 pcee_auth_token=$(curl --request POST \
@@ -88,9 +120,12 @@ pcee_auth_token=$(curl --request POST \
                        --data "${pcee_auth_body}" | jq -r '.token')
 
 
-# Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
-
-echo "I'm getting the tokens boss" | cowsay
+if [[ $(printf %s "${pcee_auth_token}") == null ]]; then
+  echo "I couldn't get the jwt boss, check your access key and secret key variables and the expiration date" | cowsay;
+  exit;
+else
+  echo "I recieved the jwt/red-lock auth token boss!" | cowsay;
+fi
 
 # This saves the json as a variable so it can be manipulated for downstream processing below.
 
@@ -99,23 +134,43 @@ pcee_scan=$(curl --request POST \
                  -H 'content-type: application/vnd.api+json' \
                  -d "${pcee_iac_payload}" \
                  --url "${pcee_console_api_url}/iac/v2/scans")
-
-# Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
-echo "I'm checking the config file boss" | cowsay -t
+                 
+pcee_scan_check=$?
+if [ $pcee_scan_check != 0 ]; then
+  echo "check the pcee_iac_payload_single variable" | cowsay;
+  exit;
+fi
 
 # You need this as the scan ID it's part of the json that gets returned from the original curl request
 pcee_scan_id=$(echo ${pcee_scan} | jq -r '.[].id')
 
+pcee_scan_id_check=$?
+if [ $pcee_scan_id_check != 0 ]; then
+  echo "the repsonse isn't valid, there's an issue with the api endpoint" | cowsay;
+  echo "$pcee_scan" | jq -r '. | {error_code: .errors[].status, details: .errors[].detail}' | cowsay;
+  exit;
+fi
+
 # You need this part to pull out the unique URL that gets sent back to you.
 pcee_scan_url=$(echo ${pcee_scan} | jq -r '.[].links.url')
 
+if [ $pcee_scan_url_check != 0 ]; then
+  echo "repsonse not valid, something might be up with the api endpoint" | cowsay;
+  echo "$pcee_scan" | jq -r '. | {error_code: .errors[].status, details: .errors[].detail}' | cowsay;
+  exit;
+fi
+
+
 # This is where you upload the files to be scanned to Prisma Cloud Enterprise Edition
 
-curl -X PUT "${pcee_scan_url}" -T "${pcee_iac_scan_file}"
+curl -X PUT "${pcee_scan_url}" -T "${pcee_iac_scan_file}"pcee_upload_check=$?
 
+if [ $pcee_upload_check != 0 ]; then
+  echo "upload of file failed, nothing on your end" | cowsay;
+  exit;
+fi
 
-# Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
-echo "Okay, I'll stage the files for scanning...whew...lot of work here" | cowsay -t
+echo "File\(s\) uploaded successfully" | cowsay -t
 
 # Same thing as above, I did this to help with formatting errors while working with json in bash
 pcee_temp_json_single="
@@ -137,8 +192,15 @@ curl --request POST \
      --url "${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}" \
      --data-raw "${pcee_temp_json}"
 
+pcee_scan_start_check=$?
+if [ $pcee_scan_start_check != 0 ]; then
+  echo "failed to start the scan; most likely an internal issue" | cowsay;
+  exit;
+fi
+
+
 # Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
-echo "I wonder how we did" | cowthink
+echo "Scan started" | cowthink
 
 
 # This part retrieves the scan progress. It should be converted to a "while loop" outside of a demo env. 
@@ -146,6 +208,13 @@ echo "I wonder how we did" | cowthink
 pcee_scan_status=$(curl -X GET "${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}/status" \
                         --header "x-redlock-auth: ${pcee_auth_token}" \
                         --header 'Content-Type: application/vnd.api+json' | jq -r '.[].attributes.status')
+
+
+pcee_scan_status_check=$?
+if [ $pcee_scan_status_check != 0 ]; then
+  echo "something failed during processing. Not an issue on your end" | cowsay;
+  exit;
+fi
 
 # Put a '#' in front of the line directly below this to disable cowsay. Cowsay is required to be installed if you want to run this. 
 echo "${pcee_scan_status}" | cowthink
@@ -159,6 +228,13 @@ pcee_iac_results=$(curl --request GET \
                         --url "${pcee_console_api_url}/iac/v2/scans/${pcee_scan_id}/results" \
                         --header "content-type: application/json" \
                         --header "x-redlock-auth: ${pcee_auth_token}")
+
+
+pcee_iac_results_check=$?
+if [ $pcee_iac_results_check != 0 ]; then
+  echo "If you're uploading more than one file at a time, change the sleep command on line 230." | cowsay;
+  exit;
+fi
 
 echo "${pcee_iac_results}" | jq '.data[] | {issue: .attributes.name, severity: .attributes.severity, rule: .attributes.rule, description: .attributes.desc, pan_link: .attributes.docUrl, file: .attributes.blameList[].file, path: .attributes.blameList[].locations[].path, line: .attributes.blameList[].locations[].line}'| cowsay -W 80
 
