@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/kyle9021/iac-poc-prisma-cloud-enterprise/badge)](https://www.codefactor.io/repository/github/kyle9021/iac-poc-prisma-cloud-enterprise)
+
 # IaC-POC-Prisma-Cloud-Enterprise
 
 ## Assumptions
