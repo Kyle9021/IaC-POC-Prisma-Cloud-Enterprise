@@ -137,7 +137,7 @@ pcee_scan=$(curl -s --request POST \
                  
 pcee_scan_check=$?
 if [ $pcee_scan_check != 0 ]; then
-  echo "check the pcee_iac_payload_single variable" | cowsay;
+  echo "check the pcee_iac_payload_single variable or ensure you're not on global protect" | cowsay;
   exit;
 fi
 
