@@ -163,7 +163,9 @@ fi
 
 # This is where you upload the files to be scanned to Prisma Cloud Enterprise Edition
 
-curl -X PUT "${pcee_scan_url}" -T "${pcee_iac_scan_file}"pcee_upload_check=$?
+curl -X PUT "${pcee_scan_url}" -T "${pcee_iac_scan_file}"
+
+pcee_upload_check=$?
 
 if [ $pcee_upload_check != 0 ]; then
   echo "upload of file failed, nothing on your end" | cowsay;
