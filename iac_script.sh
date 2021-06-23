@@ -154,6 +154,7 @@ fi
 # You need this part to pull out the unique URL that gets sent back to you.
 pcee_scan_url=$(echo ${pcee_scan} | jq -r '.[].links.url')
 
+pcee_scan_url_check=$?
 if [ $pcee_scan_url_check != 0 ]; then
   echo "repsonse not valid, something might be up with the api endpoint" | cowsay;
   echo "$pcee_scan" | jq -r '. | {error_code: .errors[].status, details: .errors[].detail}' | cowsay;
