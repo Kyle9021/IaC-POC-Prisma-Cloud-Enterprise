@@ -1,6 +1,6 @@
 #!/bin/bash
 # Written By Kyle Butler
-# Tested on 6.04.2021 on prisma_cloud_enterprise_edition using Ubuntu 20.04
+# Tested on 6.22.2021 on prisma_cloud_enterprise_edition using Ubuntu 20.04
 
 # Requires jq to be installed sudo apt-get install jq
 # Requires cowsay: sudo apt install cowsay
