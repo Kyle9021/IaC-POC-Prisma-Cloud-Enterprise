@@ -173,11 +173,15 @@ pcee_auth_token=$(curl -s --request POST \
                        --data "${pcee_auth_body}" | jq -r '.token')
 
 
-if [[ $(printf %s "${pcee_auth_token}") == null ]]; then
-  echo "I couldn't get the jwt boss, check your access key and secret key variables and the expiration date" | cowsay;
-  exit;
+if [ -z "${pcee_auth_token}" ]; then
+	echo;
+	echo -e "\033[32mauth token not recieved, recommending you check your variable assignment; or you're able to reach the console\033[0m";
+	echo;
+	exit;
 else
-  echo "I recieved the jwt/red-lock auth token boss!" | cowsay;
+	echo;
+	echo "auth token recieved" | cowsay;
+	echo;
 fi
 
 # This saves the json as a variable so it can be manipulated for downstream processing below.
