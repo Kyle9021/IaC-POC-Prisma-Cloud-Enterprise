@@ -15,7 +15,6 @@
   
    * Add it to your `.gitignore` (if using git) file and `chmod 700 iac_script.bash` between steps 3 and 4 below so that others can't read, write, or excute it. 
 
-# Instructions
 
 ## Instructions
 
