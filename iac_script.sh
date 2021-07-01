@@ -62,6 +62,12 @@ pcee_iac_payload_single="
 
 # nothing below this line needs to be configured
 
+error_and_exit() {
+  echo
+  echo "ERROR: ${1}"
+  echo
+  exit 1
+}
 # Because you need to be able to represent 
 
 echo "                                                  "
