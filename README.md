@@ -2,6 +2,14 @@
 
 # IaC-POC-Prisma-Cloud-Enterprise
 
+# Updates:
+
+I found a few issues with the way this works and so to address them I wrote a different tool/script to address. 
+
+See the new tool here: [Iac-scanning-tool-rev2](https://github.com/Kyle9021/pcee_iac_demo_scanning_tool_rev2)
+
+I'll leave this here for those who would like to reference it. One of the main issues with this script, is that it only works with files. This might not seem like a big deal, but if you wanted to scan the terragoat repository as outlined below, you'd find out that some of the tf files don't scan. The manual workaround is to zip the whole directory up and then scan the zip, but then you'd have to adjust the variables in the script, etc.....the link above goes to a much more refined version of the script. 
+
 ## Last confirmed working 6.25.2021
 
 ## Assumptions
